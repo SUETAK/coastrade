@@ -15,16 +15,17 @@ services:
     build:
       context: .
       dockerfile: ./docker/mysql/Dockerfile # ①ビルドに使うDockerfileの場所
+    tty: true # ②コンテナの永続化
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: crypto
-      MYSQL_USER: suetak
-      MYSQL_PASSWORD: suetak
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
       MYSQL_ROOT_PASSWORD: root
       TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=64M
     volumes:
-      - ./docker/mysql:/var/lib/mysql
+      - ./db:/var/lib/mysql
       - ./docker/mysql:/etc/mysql/conf.d/my.cnf
     ports:
       - 3306:3306
