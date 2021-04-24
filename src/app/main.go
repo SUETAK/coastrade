@@ -1,15 +1,19 @@
 package main
 
 import (
+	"castrade/src/app/config"
 	"fmt"
 	"time"
-	"github.com/jinzhu/gorm"
+
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
 	db := sqlConnect()
 	defer db.Close()
+	configUser := config.Config.User
+	fmt.Println(configUser)
 }
 
 func sqlConnect() (database *gorm.DB) {

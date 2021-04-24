@@ -3,10 +3,10 @@ FROM golang:1.16.3-alpine
 # アップデートとgitのインストール！！
 RUN apk update && apk add git
 # appディレクトリの作成
-RUN mkdir /go/src/app
+RUN mkdir /go/coastrade
 # ワーキングディレクトリの設定
-WORKDIR /go/src
+WORKDIR /go/coastrade
 
-COPY go.mod /go/src
+COPY go.mod /go/coastrade
 
 RUN go mod download
