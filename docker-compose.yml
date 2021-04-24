@@ -7,6 +7,8 @@ services:
     tty: true # ②コンテナの永続化
     volumes:
         - ./src/app:/go/src/app # ③マウントディレクトリ
+    command: /bin/sh -c "go run app/main.go"
+    stdin_open: true
     ports:
       - 8086:8086
     depends_on:
@@ -15,7 +17,6 @@ services:
     build:
       context: .
       dockerfile: ./docker/mysql/Dockerfile # ①ビルドに使うDockerfileの場所
-    tty: true # ②コンテナの永続化
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: crypto
