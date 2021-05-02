@@ -6,7 +6,7 @@ import (
 )
 
 func TestDoRequest(t *testing.T) {
-	if api.doRequest() != "hello go" {
+	if api.DoRequest() != "hello go!" {
 		t.Fatal("doReqsuest should be hello go")
 	}
 }

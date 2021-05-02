@@ -7,7 +7,7 @@ services:
     tty: true # ②コンテナの永続化
     volumes:
         - .:/go/coastrade # ③マウントディレクトリ
-    command: /bin/sh -c "go run cmd/app/main.go"
+    # command: /bin/sh -c "go run cmd/app/main.go"
     stdin_open: true
     ports:
       - 8086:8086
