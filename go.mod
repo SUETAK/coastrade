@@ -1,13 +1,10 @@
-module castrade
+module coastrade
 
 go 1.16
 
 require (
-	github.com/geek-line/sum v0.0.0-20200505092840-383b88996b90
-	github.com/gin-gonic/gin v1.7.1 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/jinzhu/gorm v1.9.16 // indirect
-	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
-	gopkg.in/ini.v1 v1.62.0 // indirect
-	honnef.co/go/tools v0.1.3 // indirect
+	github.com/go-sql-driver/mysql v1.6.0
+	github.com/jinzhu/gorm v1.9.16
+	github.com/smartystreets/goconvey v1.6.4 // indirect
+	gopkg.in/ini.v1 v1.62.0
 )

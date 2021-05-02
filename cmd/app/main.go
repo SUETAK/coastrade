@@ -1,8 +1,8 @@
 package main
 
 import (
-	"castrade/configs"
-	"castrade/cmd/app/infrastructure"
+	"coastrade/configs"
+	"coastrade/cmd/app/infrastructure"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"

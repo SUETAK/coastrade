@@ -1,9 +1,9 @@
-package infrastructure
+package api
 
 import "net/http"
 
-func doRequest() {
-	return
+func DoRequest() string {
+	return "hello go"
 }
 
 // この動作や、値しか許容しない構造体にする
