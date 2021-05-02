@@ -9,4 +9,5 @@ require (
 	github.com/jinzhu/gorm v1.9.16 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
+	honnef.co/go/tools v0.1.3 // indirect
 )

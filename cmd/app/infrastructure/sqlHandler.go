@@ -1,7 +1,6 @@
-package main
+package infrastructure
 
 import (
-	"castrade/src/app/config"
 	"fmt"
 	"time"
 
@@ -9,20 +8,13 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func main() {
-	db := sqlConnect()
-	defer db.Close()
-	configUser := config.Config.User
-	fmt.Println(configUser)
-}
-
-func sqlConnect() (database *gorm.DB) {
+func SqlConnect() (database *gorm.DB) {
 	DBMS := "mysql"
 	USER := "suetak"
 	PASSWORD := "suetak"
 	PROTOCOL := "tcp(db:3306)"
 	DBNAME := "crypto"
-	
+
 	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DBNAME + "?charset=utf8&parseTime=true&loc=Asia%2FTokyo"
 
 	count := 0
@@ -36,7 +28,7 @@ func sqlConnect() (database *gorm.DB) {
 			fmt.Print(".")
 			time.Sleep(time.Second)
 			count++
-			if count>60 {
+			if count > 60 {
 				fmt.Print("")
 				fmt.Print("db接続失敗")
 				panic(err)

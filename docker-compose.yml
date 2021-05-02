@@ -3,11 +3,11 @@ services:
   app: # サービス名
     build:
         context: .
-        dockerfile: ./docker/go/Dockerfile # ①ビルドに使うDockerfileの場所
+        dockerfile: ./build/docker/go/Dockerfile # ①ビルドに使うDockerfileの場所
     tty: true # ②コンテナの永続化
     volumes:
         - .:/go/coastrade # ③マウントディレクトリ
-    command: /bin/sh -c "go run src/app/main.go"
+    command: /bin/sh -c "go run cmd/app/main.go"
     stdin_open: true
     ports:
       - 8086:8086
@@ -16,7 +16,7 @@ services:
   db:
     build:
       context: .
-      dockerfile: ./docker/mysql/Dockerfile # ①ビルドに使うDockerfileの場所
+      dockerfile: ./build/docker/mysql/Dockerfile # ①ビルドに使うDockerfileの場所
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: crypto
@@ -27,6 +27,6 @@ services:
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --innodb-buffer-pool-size=64M
     volumes:
       - ./db:/var/lib/mysql
-      - ./docker/mysql:/etc/mysql/conf.d/my.cnf
+      - ./build/docker/mysql:/etc/mysql/conf.d/my.cnf
     ports:
       - 3306:3306
