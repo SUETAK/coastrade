@@ -1,12 +1,19 @@
 package test
 
 import (
-	"testing"
 	"coastrade/api"
+	"fmt"
+	"net/url"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestDoRequest(t *testing.T) {
-	if api.DoRequest() != "hello go!" {
-		t.Fatal("doReqsuest should be hello go")
-	}
+func TestNewClient(t *testing.T) {
+	testBaseurl, _ := url.ParseRequestURI("http://example.org")
+	testClient := api.New("test", "testKey", testBaseurl)
+	api, error := api.NewClient("test", "testKey", "http://example.org")
+	fmt.Println(error)
+	assert.Nil(t, error)
+	assert.Equal(t, api, testClient)
 }

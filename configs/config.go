@@ -13,6 +13,7 @@ type ConfigList struct {
 	User      string
 	Host      string
 	Password  string
+	BaseUrl   string
 }
 
 var Config ConfigList
@@ -23,11 +24,12 @@ func init() {
 		log.Printf("Faild to read file: %v", err)
 		os.Exit(1)
 	}
-	Config = ConfigList{
+	Config = ConfigList {
 		config.Section("bitflyer").Key("api_key").String(),
 		config.Section("bitflyer").Key("api_secret").String(),
 		config.Section("mysql").Key("user").String(),
 		config.Section("mysql").Key("host").String(),
 		config.Section("mysql").Key("password").String(),
+		config.Section("bitflyer").Key("base_url").String(),
 	}
 }
