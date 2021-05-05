@@ -3,3 +3,4 @@ config.ini
 .env
 db
 .vscode
+.DS_Store
