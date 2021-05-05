@@ -8,7 +8,7 @@ import (
 	"net/url"
 )
 
-func doRequest(apiPath string) (string, error) {
+func DoRequest(apiPath string) (string, error) {
 	client, err := NewClient(config.Config.ApiKey,
 		config.Config.ApiSecret,
 		config.Config.BaseUrl)
