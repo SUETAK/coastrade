@@ -4,6 +4,8 @@ package persistance
 import (
 	"coastrade/api/client"
 	config "coastrade/configs"
+	"errors"
+	"fmt"
 
 	"coastrade/domain/model"
 	"coastrade/domain/repository"
@@ -26,11 +28,15 @@ func (tp TickerPersistance) GetTicker() (*model.Ticker, error) {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
 	}
+	responseBytes := []byte(response)
+
+	fmt.Printf("%s", response)
 
 	var ticker model.Ticker
-	err = json.Unmarshal(response, &ticker)
+	err = json.Unmarshal(responseBytes, &ticker)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("error")
 	}
 	return &ticker, nil
 }
