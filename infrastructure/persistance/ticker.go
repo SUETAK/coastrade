@@ -2,6 +2,7 @@ package persistance
 
 import (
 	"coastrade/api/client"
+	config "coastrade/configs"
 	"coastrade/domain"
 	"coastrade/domain/repository"
 )
@@ -13,7 +14,8 @@ func NewTickerPersistance() repository.TickerRepository {
 }
 
 func (ticker tickerPersistance) GetTicker() (*domain.Ticker, error){
-	_, err := client.DoRequest("getticker")
+	apiClient := client.New(config.Config.ApiKey, config.Config.ApiSecret)
+	_, err := apiClient.DoRequest("getticker")
 	if err != nil {
 		return nil, err
 	}
