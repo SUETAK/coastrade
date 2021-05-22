@@ -1,7 +1,7 @@
 package repository
 
-import "coastrade/domain"
+import "coastrade/domain/model"
 
 type TickerRepository interface {
-	GetTicker() (*domain.Ticker, error) 
+	GetTicker() (*model.Ticker, error) 
 }

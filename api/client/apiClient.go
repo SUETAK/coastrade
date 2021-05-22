@@ -17,8 +17,7 @@ import (
 const baseUrl = "https://api.bitflyer.com/v1/"
 
 
-func (client *Client)DoRequest(apiPath string) (body []byte, err error) {
-	method := "GET"
+func (client *Client)DoRequest(apiPath, method string) (body []byte, err error) {
 	baseUrl, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, err

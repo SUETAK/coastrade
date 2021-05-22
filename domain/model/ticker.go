@@ -1,4 +1,4 @@
-package domain
+package model
 
 type Ticker struct {
 	ProductCode     string  `json:"product_code"`
