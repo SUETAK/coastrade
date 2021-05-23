@@ -20,9 +20,7 @@ func main() {
 	// bitflyerのapiにリクエストして、レスポンスを受け取る
 	fmt.Println(configUser)
 
-	tickerPersistance := persistance.NewTickerPersistance()
-	tickerUseCase := usecase.NewTickerUseCase(tickerPersistance)
-	tickerHandler := handler.NewTickerHandler(tickerUseCase)
+	tickerHandler := NewTicker()
 
 	router := httprouter.New()
 	router.GET("/api/ticker", tickerHandler.Index)
@@ -31,4 +29,10 @@ func main() {
 	fmt.Println(`Server Start >> http:// localhost:%d`, port)
 	log.Fatal(http.ListenAndServe(port, router))
 
+}
+
+func NewTicker() handler.TickerHandler {
+	tickerPersistance := persistance.NewTickerPersistance()
+	tickerUseCase := usecase.NewTickerUseCase(tickerPersistance)
+	return handler.NewTickerHandler(tickerUseCase)
 }
