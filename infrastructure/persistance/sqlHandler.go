@@ -39,3 +39,12 @@ func SqlConnect() (database *gorm.DB) {
 	fmt.Println("DB接続成功")
 	return db
 }
+
+func CreateNewTable() bool {
+	// TODO 対象のテーブルがない場合は新しいテーブルを作る
+	return true
+}
+
+func GetCandle() Candle {
+	return NewCandle()
+}
