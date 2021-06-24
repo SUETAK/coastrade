@@ -25,7 +25,7 @@ func main() {
 	router := httprouter.New()
 	router.GET("/api/ticker", tickerHandler.Index)
 
-	port := ":8086"
+	port := ":8087"
 	fmt.Println(`Server Start >> http:// localhost:%d`, port)
 	log.Fatal(http.ListenAndServe(port, router))
 

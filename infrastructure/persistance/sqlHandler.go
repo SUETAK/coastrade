@@ -44,7 +44,3 @@ func CreateNewTable() bool {
 	// TODO 対象のテーブルがない場合は新しいテーブルを作る
 	return true
 }
-
-func GetCandle() Candle {
-	return NewCandle()
-}

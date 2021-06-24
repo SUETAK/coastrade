@@ -17,7 +17,7 @@ type tickerHandler struct {
 }
 
 func NewTickerHandler(tu usecase.TickerUseCase) TickerHandler {
-	return &tickerHandler {
+	return &tickerHandler{
 		tickerUseCase: tu,
 	}
 }
@@ -31,11 +31,9 @@ func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprou
 	}
 
 	//クライアントにレスポンスを返却
-    w.Header().Set("Content-Type", "application/json")
-    if err = json.NewEncoder(w).Encode(ticker); err != nil {
-        http.Error(w, "Internal Server Error", 500)
-        return
-    }
+	w.Header().Set("Content-Type", "application/json")
+	if err = json.NewEncoder(w).Encode(ticker); err != nil {
+		http.Error(w, "Internal Server Error", 500)
+		return
+	}
 }
-
-
