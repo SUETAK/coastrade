@@ -6,12 +6,11 @@ import (
 	"coastrade/infrastructure/persistence"
 	"coastrade/usecase"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/julienschmidt/httprouter"
 	"github.com/uptrace/bun"
 	"log"
 	"net/http"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
@@ -30,6 +29,7 @@ func main() {
 
 	router := httprouter.New()
 	router.GET("/api/ticker", tickerHandler.Index)
+	router.GET("/api/continue/ticker", tickerHandler.ContinueIndex)
 
 	port := ":8087"
 	fmt.Println(`Server Start >> http://localhost:%s`, port)

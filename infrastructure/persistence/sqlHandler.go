@@ -17,10 +17,10 @@ func SqlConnect() *bun.DB {
 	DBMS := "mysql"
 	USER := "suetak"
 	PASSWORD := "suetak"
-	PROTOCOL := "tcp(db:3306)"
+	//PROTOCOL := "tcp(db:3306)"
 	DBNAME := "crypto"
 
-	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DBNAME + "?charset=utf8&parseTime=true&loc=Asia%2FTokyo"
+	CONNECT := USER + ":" + PASSWORD + "@" + "/" + DBNAME
 
 	count := 0
 	sqldb, err := sql.Open(DBMS, CONNECT)
