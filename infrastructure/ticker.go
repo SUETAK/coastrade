@@ -1,6 +1,6 @@
-package persistence
+// Package infrastructure 外部への疎通などを扱う層。ticker関連の操作はこのファイルで行う
+package infrastructure
 
-// APIの技術的関心ごとを扱う層。ticker関連の操作はここで行う
 import (
 	"coastrade/api/client"
 	config "coastrade/configs"
@@ -12,15 +12,13 @@ import (
 	"log"
 )
 
-type TickerPersistence struct{}
-
-// 返り値をインターフェース型であるTickerRepositoryに指定。
-// TickerRepositoryに依存していることになる
-func NewTickerPersistence() *TickerPersistence {
-	return &TickerPersistence{}
+func NewTickerInfra() *TickerInfra {
+	return &TickerInfra{}
 }
 
-func (tp *TickerPersistence) GetTicker() (*model.Ticker, error) {
+type TickerInfra struct{}
+
+func (tp *TickerInfra) GetTicker() (*model.Ticker, error) {
 	apiClient := client.New(config.Config.ApiKey, config.Config.ApiSecret)
 	response, err := apiClient.DoRequest("ticker", "GET")
 	if err != nil {

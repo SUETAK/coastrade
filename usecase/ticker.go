@@ -3,7 +3,7 @@ package usecase
 
 import (
 	"coastrade/domain/model"
-	"coastrade/infrastructure/persistence"
+	"coastrade/infrastructure"
 )
 
 type TickerUseCase interface {
@@ -11,7 +11,7 @@ type TickerUseCase interface {
 }
 
 type tickerUseCase struct {
-	tickerPersistence persistence.TickerPersistence
+	tickerPersistence infrastructure.TickerInfra
 }
 
 func (tu *tickerUseCase) GetTicker() (ticker *model.Ticker, err error) {
@@ -22,8 +22,8 @@ func (tu *tickerUseCase) GetTicker() (ticker *model.Ticker, err error) {
 	return ticker, nil
 }
 
-func NewTickerUseCase(tp persistence.TickerPersistence) TickerUseCase {
+func NewTickerUseCase() TickerUseCase {
 	return &tickerUseCase{
-		tickerPersistence: tp,
+		tickerPersistence: *infrastructure.NewTickerInfra(),
 	}
 }

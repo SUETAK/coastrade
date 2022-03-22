@@ -3,7 +3,7 @@ package main
 import (
 	config "coastrade/configs"
 	handler "coastrade/handler/rest"
-	"coastrade/infrastructure/persistence"
+	"coastrade/infrastructure"
 	"coastrade/usecase"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,13 +14,14 @@ import (
 )
 
 func main() {
-	db := persistence.SqlConnect()
+	db := infrastructure.SqlConnect()
 	defer func(db *bun.DB) {
 		err := db.Close()
 		if err != nil {
 
 		}
 	}(db)
+	infrastructure.CreateNewTable(db)
 	configUser := config.Config.User
 	// bitflyerのapiにリクエストして、レスポンスを受け取る
 	fmt.Println(configUser)
@@ -38,7 +39,5 @@ func main() {
 }
 
 func NewTicker() handler.TickerHandler {
-	tickerPersistence := persistence.NewTickerPersistence()
-	tickerUseCase := usecase.NewTickerUseCase(*tickerPersistence)
-	return handler.NewTickerHandler(tickerUseCase)
+	return handler.NewTickerHandler(usecase.NewTickerUseCase())
 }

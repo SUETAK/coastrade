@@ -1,7 +1,9 @@
 // Package persistence domain>repository で定義されたinterface 実装を各所
-package persistence
+package infrastructure
 
 import (
+	"coastrade/domain/model"
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/uptrace/bun"
@@ -45,7 +47,12 @@ func SqlConnect() *bun.DB {
 	return bun.NewDB(sqldb, mysqldialect.New())
 }
 
-func CreateNewTable() bool {
+func CreateNewTable(db *bun.DB) bool {
 	// TODO 対象のテーブルがない場合は新しいテーブルを作る
+	_, err := db.NewCreateTable().Model((*model.Ticker)(nil)).Exec(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("create_table")
 	return true
 }
