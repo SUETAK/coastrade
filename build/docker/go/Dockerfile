@@ -1,5 +1,5 @@
 # 2020/04/21最新versionを取得
-FROM golang:1.16.3-alpine
+FROM golang:1.18
 # アップデートとgitのインストール！！
 RUN apk update && apk add git && apk add --no-cache gcc && apk add --no-cache musl-dev
 # appディレクトリの作成

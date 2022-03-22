@@ -3,9 +3,10 @@ package main
 import (
 	config "coastrade/configs"
 	handler "coastrade/handler/rest"
-	"coastrade/infrastructure/persistance"
+	"coastrade/infrastructure/persistence"
 	"coastrade/usecase"
 	"fmt"
+	"github.com/uptrace/bun"
 	"log"
 	"net/http"
 
@@ -14,8 +15,13 @@ import (
 )
 
 func main() {
-	// db := persistance.SqlConnect()
-	// defer db.Close()
+	db := persistence.SqlConnect()
+	defer func(db *bun.DB) {
+		err := db.Close()
+		if err != nil {
+
+		}
+	}(db)
 	configUser := config.Config.User
 	// bitflyerのapiにリクエストして、レスポンスを受け取る
 	fmt.Println(configUser)
@@ -26,13 +32,13 @@ func main() {
 	router.GET("/api/ticker", tickerHandler.Index)
 
 	port := ":8087"
-	fmt.Println(`Server Start >> http:// localhost:%d`, port)
+	fmt.Println(`Server Start >> http://localhost:%s`, port)
 	log.Fatal(http.ListenAndServe(port, router))
 
 }
 
 func NewTicker() handler.TickerHandler {
-	tickerPersistance := persistance.NewTickerPersistance()
-	tickerUseCase := usecase.NewTickerUseCase(tickerPersistance)
+	tickerPersistence := persistence.NewTickerPersistence()
+	tickerUseCase := usecase.NewTickerUseCase(*tickerPersistence)
 	return handler.NewTickerHandler(tickerUseCase)
 }

@@ -1,7 +1,6 @@
 package usecase
 
-import()
+// Candle についてのロジックを提供する
 
 type CandleUseCase interface {
-	
 }

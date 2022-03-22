@@ -15,6 +15,23 @@ import (
 
 const baseUrl = "https://api.bitflyer.com/v1/"
 
+func New(apikey, secretkey string) *Client {
+	return &Client{
+		apikey:     apikey,
+		secretkey:  secretkey,
+		httpClient: &http.Client{},
+		log:        &log.Logger{},
+	}
+}
+
+// この動作や、値しか許容しない構造体にする
+type Client struct {
+	apikey, secretkey string
+	httpClient        *http.Client
+	baseUrl           *url.URL
+	log               *log.Logger
+}
+
 func (client *Client) DoRequest(apiPath, method string) (body []byte, err error) {
 	baseUrl, err := url.Parse(baseUrl)
 	if err != nil {
@@ -59,32 +76,15 @@ func (client *Client) DoRequest(apiPath, method string) (body []byte, err error)
 	return body, nil
 }
 
-// この動作や、値しか許容しない構造体にする
-type Client struct {
-	apikey, secretkey string
-	httpClient        *http.Client
-	baseUrl           *url.URL
-	log               *log.Logger
-}
-
-func New(apikey, secretkey string) *Client {
-	return &Client{
-		apikey:     apikey,
-		secretkey:  secretkey,
-		httpClient: &http.Client{},
-		log:        &log.Logger{},
-	}
-}
-
-func (api Client) header(method, endpoint string, body []byte) map[string]string {
+func (client *Client) header(method, endpoint string, body []byte) map[string]string {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 	log.Println(timestamp)
 	message := timestamp + method + endpoint + string(body)
-	mac := hmac.New(sha256.New, []byte(api.secretkey))
+	mac := hmac.New(sha256.New, []byte(client.secretkey))
 	mac.Write([]byte(message))
 	sign := hex.EncodeToString(mac.Sum(nil))
 	return map[string]string{
-		"ACCESS-KEY":       api.apikey,
+		"ACCESS-KEY":       client.apikey,
 		"ACCESS-TIMESTAMP": timestamp,
 		"ACCESS-SIGN":      sign,
 		"Content-Type":     "application/json",

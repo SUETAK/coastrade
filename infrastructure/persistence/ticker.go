@@ -1,4 +1,4 @@
-package persistance
+package persistence
 
 // APIの技術的関心ごとを扱う層。ticker関連の操作はここで行う
 import (
@@ -8,20 +8,19 @@ import (
 	"fmt"
 
 	"coastrade/domain/model"
-	"coastrade/domain/repository"
 	"encoding/json"
 	"log"
 )
 
-type TickerPersistance struct{}
+type TickerPersistence struct{}
 
 // 返り値をインターフェース型であるTickerRepositoryに指定。
 // TickerRepositoryに依存していることになる
-func NewTickerPersistance() repository.TickerRepository {
-	return &TickerPersistance{}
+func NewTickerPersistence() *TickerPersistence {
+	return &TickerPersistence{}
 }
 
-func (tp TickerPersistance) GetTicker() (*model.Ticker, error) {
+func (tp *TickerPersistence) GetTicker() (*model.Ticker, error) {
 	apiClient := client.New(config.Config.ApiKey, config.Config.ApiSecret)
 	response, err := apiClient.DoRequest("ticker", "GET")
 	if err != nil {
