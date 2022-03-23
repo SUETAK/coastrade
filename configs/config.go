@@ -7,7 +7,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type ConfigList struct {
+type Config struct {
 	ApiKey    string
 	ApiSecret string
 	User      string
@@ -16,15 +16,13 @@ type ConfigList struct {
 	BaseUrl   string
 }
 
-var Config ConfigList
-
-func init() {
+func CreateConfig() Config {
 	config, err := ini.Load("config.ini")
 	if err != nil {
 		log.Printf("Faild to read file: %v", err)
 		os.Exit(1)
 	}
-	Config = ConfigList {
+	return Config{
 		config.Section("bitflyer").Key("api_key").String(),
 		config.Section("bitflyer").Key("api_secret").String(),
 		config.Section("mysql").Key("user").String(),

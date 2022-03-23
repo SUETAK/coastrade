@@ -2,13 +2,14 @@
 package usecase
 
 import (
+	config "coastrade/configs"
 	"coastrade/domain/model"
 	"coastrade/infrastructure"
 )
 
-func NewTickerUseCase(db infrastructure.CryptoSQL) TickerUseCase {
+func NewTickerUseCase(db infrastructure.CryptoSQL, config config.Config) TickerUseCase {
 	return &tickerUseCase{
-		tickerInfra: infrastructure.NewTickerInfra(),
+		tickerInfra: infrastructure.NewTickerInfra(config),
 		cryptoSQL:   db,
 	}
 }

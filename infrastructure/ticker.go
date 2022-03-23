@@ -12,18 +12,22 @@ import (
 	"log"
 )
 
-func NewTickerInfra() TickerInfra {
-	return &ticker{}
+func NewTickerInfra(config config.Config) TickerInfra {
+	return &ticker{
+		config: config,
+	}
 }
 
 type TickerInfra interface {
 	GetTicker() (*model.Ticker, error)
 }
 
-type ticker struct{}
+type ticker struct {
+	config config.Config
+}
 
 func (tp *ticker) GetTicker() (*model.Ticker, error) {
-	apiClient := client.New(config.Config.ApiKey, config.Config.ApiSecret)
+	apiClient := client.New(tp.config.ApiKey, tp.config.ApiSecret)
 	response, err := apiClient.DoRequest("ticker", "GET")
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())

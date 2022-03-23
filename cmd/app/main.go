@@ -17,11 +17,11 @@ func main() {
 	defer func(db infrastructure.CryptoSQL) {
 		db.CloseDBConnection()
 	}(db)
-	configUser := config.Config.User
+	config := config.CreateConfig()
 	// bitflyerのapiにリクエストして、レスポンスを受け取る
-	fmt.Println(configUser)
+	fmt.Println(config)
 
-	tickerHandler := NewTicker(db)
+	tickerHandler := NewTicker(db, config)
 
 	router := httprouter.New()
 	router.GET("/api/ticker", tickerHandler.Index)
@@ -33,6 +33,6 @@ func main() {
 
 }
 
-func NewTicker(db infrastructure.CryptoSQL) handler.TickerHandler {
-	return handler.NewTickerHandler(usecase.NewTickerUseCase(db))
+func NewTicker(db infrastructure.CryptoSQL, config config.Config) handler.TickerHandler {
+	return handler.NewTickerHandler(usecase.NewTickerUseCase(db, config))
 }
