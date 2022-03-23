@@ -1,4 +1,4 @@
-// Package persistence domain>repository で定義されたinterface 実装を各所
+// Package infrastructure domain>repository で定義されたinterface 実装を各所
 package infrastructure
 
 import (
@@ -13,9 +13,22 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+func NewDB() CryptoSQL {
+	return CryptoDB{db: createSqlConnect()}
+}
+
+type CryptoSQL interface {
+	CloseDBConnection()
+	CreateNewTable() bool
+	InsertTicker(ticker *model.Ticker)
+}
+
+type CryptoDB struct {
+	db *bun.DB
+}
+
 //多分Injectパッケージの役割
-func SqlConnect() *bun.DB {
-	//TODO Bun に移行する
+func createSqlConnect() *bun.DB {
 	DBMS := "mysql"
 	USER := "suetak"
 	PASSWORD := "suetak"
@@ -47,12 +60,25 @@ func SqlConnect() *bun.DB {
 	return bun.NewDB(sqldb, mysqldialect.New())
 }
 
-func CreateNewTable(db *bun.DB) bool {
-	// TODO 対象のテーブルがない場合は新しいテーブルを作る
-	_, err := db.NewCreateTable().Model((*model.Ticker)(nil)).Exec(context.Background())
+func (c CryptoDB) CloseDBConnection() {
+	err := c.db.Close()
+	if err != nil {
+		panic(err)
+	}
+}
+func (c CryptoDB) CreateNewTable() bool {
+	_, err := c.db.NewCreateTable().Model((*model.Ticker)(nil)).Exec(context.Background())
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("create_table")
 	return true
+}
+
+func (c CryptoDB) InsertTicker(ticker *model.Ticker) {
+	_, err := c.db.NewInsert().Model(ticker).Exec(context.Background())
+	if err != nil {
+		// TODO panic だとアプリ全体が落ちるので、エラーだけ出力する
+		panic(err)
+	}
 }

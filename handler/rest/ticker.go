@@ -10,6 +10,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+func NewTickerHandler(tu usecase.TickerUseCase) TickerHandler {
+	return &tickerHandler{
+		tickerUseCase: tu,
+	}
+}
+
 type TickerHandler interface {
 	Index(http.ResponseWriter, *http.Request, httprouter.Params)
 	ContinueIndex(http.ResponseWriter, *http.Request, httprouter.Params)
@@ -17,12 +23,6 @@ type TickerHandler interface {
 
 type tickerHandler struct {
 	tickerUseCase usecase.TickerUseCase
-}
-
-func NewTickerHandler(tu usecase.TickerUseCase) TickerHandler {
-	return &tickerHandler{
-		tickerUseCase: tu,
-	}
 }
 
 func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
@@ -52,6 +52,7 @@ func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr
 				http.Error(w, "Internal Sever Error", 500)
 				return
 			}
+
 			time.Sleep(time.Second * 3)
 		}
 	}()

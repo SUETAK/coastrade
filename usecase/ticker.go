@@ -6,24 +6,27 @@ import (
 	"coastrade/infrastructure"
 )
 
+func NewTickerUseCase(db infrastructure.CryptoSQL) TickerUseCase {
+	return &tickerUseCase{
+		tickerInfra: *infrastructure.NewTickerInfra(),
+		cryptoSQL:   db,
+	}
+}
+
 type TickerUseCase interface {
 	GetTicker() (*model.Ticker, error)
 }
 
 type tickerUseCase struct {
-	tickerPersistence infrastructure.TickerInfra
+	tickerInfra infrastructure.TickerInfra
+	cryptoSQL   infrastructure.CryptoSQL
 }
 
 func (tu *tickerUseCase) GetTicker() (ticker *model.Ticker, err error) {
-	ticker, err = tu.tickerPersistence.GetTicker()
+	ticker, err = tu.tickerInfra.GetTicker()
 	if err != nil {
 		return nil, err
 	}
+	tu.cryptoSQL.InsertTicker(ticker)
 	return ticker, nil
-}
-
-func NewTickerUseCase() TickerUseCase {
-	return &tickerUseCase{
-		tickerPersistence: *infrastructure.NewTickerInfra(),
-	}
 }

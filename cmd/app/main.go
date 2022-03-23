@@ -8,25 +8,20 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
-	"github.com/uptrace/bun"
 	"log"
 	"net/http"
 )
 
 func main() {
-	db := infrastructure.SqlConnect()
-	defer func(db *bun.DB) {
-		err := db.Close()
-		if err != nil {
-
-		}
+	db := infrastructure.NewDB()
+	defer func(db infrastructure.CryptoSQL) {
+		db.CloseDBConnection()
 	}(db)
-	infrastructure.CreateNewTable(db)
 	configUser := config.Config.User
 	// bitflyerのapiにリクエストして、レスポンスを受け取る
 	fmt.Println(configUser)
 
-	tickerHandler := NewTicker()
+	tickerHandler := NewTicker(db)
 
 	router := httprouter.New()
 	router.GET("/api/ticker", tickerHandler.Index)
@@ -38,6 +33,6 @@ func main() {
 
 }
 
-func NewTicker() handler.TickerHandler {
-	return handler.NewTickerHandler(usecase.NewTickerUseCase())
+func NewTicker(db infrastructure.CryptoSQL) handler.TickerHandler {
+	return handler.NewTickerHandler(usecase.NewTickerUseCase(db))
 }
