@@ -12,13 +12,17 @@ import (
 	"log"
 )
 
-func NewTickerInfra() *TickerInfra {
-	return &TickerInfra{}
+func NewTickerInfra() TickerInfra {
+	return &ticker{}
 }
 
-type TickerInfra struct{}
+type TickerInfra interface {
+	GetTicker() (*model.Ticker, error)
+}
 
-func (tp *TickerInfra) GetTicker() (*model.Ticker, error) {
+type ticker struct{}
+
+func (tp *ticker) GetTicker() (*model.Ticker, error) {
 	apiClient := client.New(config.Config.ApiKey, config.Config.ApiSecret)
 	response, err := apiClient.DoRequest("ticker", "GET")
 	if err != nil {

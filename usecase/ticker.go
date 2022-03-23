@@ -8,7 +8,7 @@ import (
 
 func NewTickerUseCase(db infrastructure.CryptoSQL) TickerUseCase {
 	return &tickerUseCase{
-		tickerInfra: *infrastructure.NewTickerInfra(),
+		tickerInfra: infrastructure.NewTickerInfra(),
 		cryptoSQL:   db,
 	}
 }
