@@ -32,10 +32,10 @@ func createSqlConnect() *bun.DB {
 	DBMS := "mysql"
 	USER := "suetak"
 	PASSWORD := "suetak"
-	//PROTOCOL := "tcp(db:3306)"
+	PROTOCOL := "tcp(db:3306)"
 	DBNAME := "crypto"
 
-	CONNECT := USER + ":" + PASSWORD + "@" + "/" + DBNAME
+	CONNECT := USER + ":" + PASSWORD + "@" + PROTOCOL + "/" + DBNAME
 
 	count := 0
 	sqldb, err := sql.Open(DBMS, CONNECT)

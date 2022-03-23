@@ -39,6 +39,12 @@ func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprou
 		http.Error(w, "Internal Server Error", 500)
 		return
 	}
+	res, err := json.Marshal(ticker)
+	if err != nil {
+		panic(err)
+	}
+	w.Write(res)
+
 }
 
 func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
