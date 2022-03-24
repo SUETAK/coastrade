@@ -21,6 +21,7 @@ type CryptoSQL interface {
 	CloseDBConnection()
 	CreateNewTable() bool
 	InsertTicker(ticker *model.Ticker)
+	SelectTicker() ([]model.Ticker, error)
 }
 
 type CryptoDB struct {
@@ -81,4 +82,12 @@ func (c CryptoDB) InsertTicker(ticker *model.Ticker) {
 		// TODO panic だとアプリ全体が落ちるので、エラーだけ出力する
 		panic(err)
 	}
+}
+
+func (c CryptoDB) SelectTicker() (ticker []model.Ticker, err error) {
+	tickers := make([]model.Ticker, 0)
+	if err := c.db.NewSelect().Model(&tickers).Order("timestamp ASC").Scan(context.Background()); err != nil {
+		panic(err)
+	}
+	return tickers, nil
 }
