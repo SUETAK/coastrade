@@ -45,3 +45,12 @@ func (tp *ticker) GetTicker() (*model.Ticker, error) {
 	}
 	return &ticker, nil
 }
+
+// TODO ロジックを実装する
+func (tp *ticker) Buy() {
+
+}
+
+func (tp *ticker) Sell() {
+
+}

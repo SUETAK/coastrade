@@ -31,3 +31,11 @@ func (tu *tickerUseCase) GetTicker() (ticker *model.Ticker, err error) {
 	tu.cryptoSQL.InsertTicker(ticker)
 	return ticker, nil
 }
+
+func (tu *tickerUseCase) Buy() {
+
+}
+
+func (tu tickerUseCase) Sell() {
+
+}
