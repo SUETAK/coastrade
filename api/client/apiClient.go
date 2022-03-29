@@ -32,7 +32,7 @@ type Client struct {
 	log               *log.Logger
 }
 
-func (client *Client) DoRequest(apiPath, method string) (body []byte, err error) {
+func (client *Client) DoRequest(apiPath, method, product string) (body []byte, err error) {
 	baseUrl, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func (client *Client) DoRequest(apiPath, method string) (body []byte, err error)
 
 	// Queryでtype Values map[string][]string　を返却する
 	query := request.URL.Query()
-	queryMap := map[string]string{"product_code": "ETH_JPY"}
+	queryMap := map[string]string{"product_code": product}
 	for key, value := range queryMap {
 		query.Add(key, value)
 	}

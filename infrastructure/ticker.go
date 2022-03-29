@@ -19,16 +19,16 @@ func NewTickerInfra(config config.Config) TickerInfra {
 }
 
 type TickerInfra interface {
-	GetTicker() (*model.Ticker, error)
+	GetTicker(product string) (*model.Ticker, error)
 }
 
 type ticker struct {
 	config config.Config
 }
 
-func (tp *ticker) GetTicker() (*model.Ticker, error) {
+func (tp *ticker) GetTicker(product string) (*model.Ticker, error) {
 	apiClient := client.New(tp.config.ApiKey, tp.config.ApiSecret)
-	response, err := apiClient.DoRequest("ticker", "GET")
+	response, err := apiClient.DoRequest("ticker", "GET", product)
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err

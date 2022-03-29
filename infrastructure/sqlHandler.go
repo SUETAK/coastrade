@@ -22,6 +22,10 @@ type CryptoSQL interface {
 	CreateNewTable() bool
 	InsertTicker(ticker *model.Ticker)
 	SelectTicker() ([]model.Ticker, error)
+	CreateCandleTable(model.Candle)
+	SelectCandle(candle model.Candle, time time.Time) (*model.Candle, error)
+	SelectAllCandle(candle model.Candle, limit int) ([]model.Candle, error)
+	InsertCandle(candle model.Candle)
 }
 
 type CryptoDB struct {
@@ -82,6 +86,41 @@ func (c CryptoDB) InsertTicker(ticker *model.Ticker) {
 		// TODO panic だとアプリ全体が落ちるので、エラーだけ出力する
 		panic(err)
 	}
+}
+
+func (c CryptoDB) InsertCandle(candle model.Candle) {
+	_, err := c.db.NewInsert().Model(candle).Exec(context.Background())
+	if err != nil {
+		err.Error()
+	}
+}
+
+func (c CryptoDB) CreateCandleTable(candle model.Candle) {
+	tableName := candle.ProductCode + candle.Duration.String()
+	_, err := c.db.NewCreateTable().Model(&model.Candle{}).ModelTableExpr(tableName).IfNotExists().Exec(context.Background())
+	fmt.Sprintf("create Candle table %s", tableName)
+	if err != nil {
+		// TODO panic だとアプリ全体が落ちるので、エラーだけ出力する
+		panic(err)
+	}
+}
+
+func (c CryptoDB) SelectCandle(candle model.Candle, time time.Time) (*model.Candle, error) {
+	tableName := candle.ProductCode + candle.Duration.String()
+	getCandle := model.Candle{}
+	if err := c.db.NewSelect().Model(&getCandle).Table(tableName).Where("time = ?", bun.Ident(time.String())).Order("timestamp ASC").Scan(context.Background()); err != nil {
+		return nil, err
+	}
+	return &getCandle, nil
+}
+
+func (c CryptoDB) SelectAllCandle(candle model.Candle, limit int) ([]model.Candle, error) {
+	candles := make([]model.Candle, 0)
+	tableName := candle.ProductCode + candle.Duration.String()
+	if err := c.db.NewSelect().Model(&candles).Table(tableName).Order("times DESC").Limit(limit).Scan(context.Background()); err != nil {
+		panic(err)
+	}
+	return candles, nil
 }
 
 func (c CryptoDB) SelectTicker() (ticker []model.Ticker, err error) {

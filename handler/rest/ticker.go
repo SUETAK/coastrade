@@ -26,8 +26,12 @@ type tickerHandler struct {
 }
 
 func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
-	ticker, err := th.tickerUseCase.GetTicker()
-
+	duration, err := time.ParseDuration(r.FormValue("duration"))
+	if err != nil {
+		err.Error()
+	}
+	product := r.FormValue("product")
+	ticker, err := th.tickerUseCase.GetTicker(product, duration)
 	if err != nil {
 		http.Error(w, "Internal Sever Error", 500)
 		return
@@ -53,13 +57,18 @@ func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr
 		w.Header().Set("Content-Type", "application/json")
 		for {
 			fmt.Printf("now -> %v\n", time.Now())
-			_, err := th.tickerUseCase.GetTicker()
+			duration, err := time.ParseDuration(r.FormValue("duration"))
 			if err != nil {
-				http.Error(w, "Internal Sever Error", 500)
+				err.Error()
+			}
+			product := r.FormValue("product")
+			_, err = th.tickerUseCase.GetTicker(product, duration)
+			if err != nil {
+				http.Error(w, "Internal Server Error", 500)
 				return
 			}
 
-			time.Sleep(time.Second * 3)
+			time.Sleep(duration)
 		}
 	}()
 }
