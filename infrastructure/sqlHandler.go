@@ -25,7 +25,7 @@ type CryptoSQL interface {
 	CreateCandleTable(model.Candle)
 	SelectCandle(candle model.Candle, time time.Time) (*model.Candle, error)
 	SelectAllCandle(candle model.Candle, limit int) ([]model.Candle, error)
-	InsertCandle(candle model.Candle)
+	InsertCandle(candle *model.Candle)
 }
 
 type CryptoDB struct {
@@ -88,8 +88,9 @@ func (c CryptoDB) InsertTicker(ticker *model.Ticker) {
 	}
 }
 
-func (c CryptoDB) InsertCandle(candle model.Candle) {
-	_, err := c.db.NewInsert().Model(candle).Exec(context.Background())
+func (c CryptoDB) InsertCandle(candle *model.Candle) {
+	tableName := candle.ProductCode + candle.Duration.String()
+	_, err := c.db.NewInsert().Model(candle).ModelTableExpr(tableName).Exec(context.Background())
 	if err != nil {
 		err.Error()
 	}

@@ -46,7 +46,7 @@ func (tu *tickerUseCase) GetTicker(product string, duration time.Duration) (tick
 	if err != nil {
 		err.Error()
 	}
-	tu.cryptoSQL.InsertCandle(candle)
+	tu.cryptoSQL.InsertCandle(&candle)
 	return ticker, nil
 }
 

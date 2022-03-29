@@ -28,7 +28,9 @@ func (t Ticker) TruncateDateTime(duration time.Duration) time.Time {
 }
 
 func (t Ticker) dateTime() time.Time {
-	date, err := time.Parse(time.RFC3339, t.Timestamp)
+	date, err := time.Parse(time.RFC3339, t.Timestamp+"Z")
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	date = date.In(jst)
 	if err != nil {
 		log.Printf("action=DateTime, err=%s", err.Error())
 	}
