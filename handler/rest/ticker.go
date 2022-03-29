@@ -67,8 +67,7 @@ func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr
 				http.Error(w, "Internal Server Error", 500)
 				return
 			}
-
-			time.Sleep(duration)
+			time.Sleep(time.Second)
 		}
 	}()
 }

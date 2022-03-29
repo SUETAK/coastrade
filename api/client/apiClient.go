@@ -1,9 +1,12 @@
 package client
 
 import (
+	"bytes"
+	"coastrade/infrastructure"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"log"
@@ -32,7 +35,7 @@ type Client struct {
 	log               *log.Logger
 }
 
-func (client *Client) DoRequest(apiPath, method, product string) (body []byte, err error) {
+func (client *Client) DoRequest(apiPath, method, product string, queryMap map[string]string, data []byte) (body []byte, err error) {
 	baseUrl, err := url.Parse(baseUrl)
 	if err != nil {
 		return nil, err
@@ -46,14 +49,14 @@ func (client *Client) DoRequest(apiPath, method, product string) (body []byte, e
 	endpoint := baseUrl.ResolveReference(apiUrl).String()
 	println(endpoint)
 
-	request, err := http.NewRequest("GET", "https://api.bitflyer.com/v1/ticker", nil)
+	request, err := http.NewRequest(method, apiPath, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
 	}
 
 	// Queryでtype Values map[string][]string　を返却する
 	query := request.URL.Query()
-	queryMap := map[string]string{"product_code": product}
+	queryMap["product"] = product
 	for key, value := range queryMap {
 		query.Add(key, value)
 	}
@@ -89,6 +92,36 @@ func (client *Client) header(method, endpoint string, body []byte) map[string]st
 		"ACCESS-SIGN":      sign,
 		"Content-Type":     "application/json",
 	}
+}
+
+func (client *Client) SendOrder(order *infrastructure.Order, product string) (*infrastructure.ResponseSendChildOrder, error) {
+	data, err := json.Marshal(order)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.DoRequest("POST", "me/sendchildorder", product, map[string]string{}, data)
+	if err != nil {
+		return nil, err
+	}
+	var response infrastructure.ResponseSendChildOrder
+	err = json.Unmarshal(resp, &response)
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
+}
+
+func (client *Client) ListOrder(query map[string]string, product string) ([]infrastructure.Order, error) {
+	resp, err := client.DoRequest("GET", "me/getchildorders", product, query, nil)
+	if err != nil {
+		return nil, err
+	}
+	var responseListOrder []infrastructure.Order
+	err = json.Unmarshal(resp, &responseListOrder)
+	if err != nil {
+		return nil, err
+	}
+	return responseListOrder, nil
 }
 
 func NewClient(apikey, secretkey, baseUrlstr string) (*Client, error) {
