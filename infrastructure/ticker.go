@@ -28,7 +28,7 @@ type ticker struct {
 
 func (tp *ticker) GetTicker(product string) (*model.Ticker, error) {
 	apiClient := client.New(tp.config.ApiKey, tp.config.ApiSecret)
-	response, err := apiClient.DoRequest("ticker", "GET", product)
+	response, err := apiClient.DoRequest("ticker", "GET", product, nil)
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
