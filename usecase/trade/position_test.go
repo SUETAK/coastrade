@@ -7,11 +7,11 @@ import (
 
 func Test_trade_UpdateCriteria(t1 *testing.T) {
 	type fields struct {
-		criteriaOfBuy  int32
-		criteriaOfSell int32
+		criteriaOfBuy  float64
+		criteriaOfSell float64
 	}
 	type args struct {
-		value int32
+		value float64
 	}
 	tests := []struct {
 		name             string
@@ -63,6 +63,45 @@ func Test_trade_UpdateCriteria(t1 *testing.T) {
 			assert.Equal(t1, tt.isCOBUpdate, isUpdate)
 			assert.Equal(t1, tt.expectedCOSValue, t.criteriaOfSell)
 			assert.Equal(t1, tt.isCOSUpdate, isCosUpdate)
+		})
+	}
+}
+
+func Test_trade_saveUpdateResult(t1 *testing.T) {
+	type fields struct {
+		criteriaOfBuy         float64
+		updateResultListOfCOB []bool
+		criteriaOfSell        float64
+		updateResultListOfCOS []bool
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   bool
+		want   []bool
+	}{
+		{
+			"updateResultListOfCOBを更新する",
+			fields{
+				criteriaOfBuy:         0,
+				updateResultListOfCOB: []bool{},
+				criteriaOfSell:        0,
+				updateResultListOfCOS: []bool{},
+			},
+			true,
+			[]bool{true},
+		},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &trade{
+				criteriaOfBuy:         tt.fields.criteriaOfBuy,
+				updateResultListOfCOB: tt.fields.updateResultListOfCOB,
+				criteriaOfSell:        tt.fields.criteriaOfSell,
+				updateResultListOfCOS: tt.fields.updateResultListOfCOS,
+			}
+			t.saveUpdateResultOfCOB(tt.args)
+			assert.Equal(t1, tt.want, t.updateResultListOfCOB)
 		})
 	}
 }
