@@ -7,8 +7,7 @@ import (
 
 func Test_trade_UpdateCriteria(t1 *testing.T) {
 	type fields struct {
-		criteriaOfBuy  float64
-		criteriaOfSell float64
+		criteriaOfBuy float64
 	}
 	type args struct {
 		value float64
@@ -19,43 +18,34 @@ func Test_trade_UpdateCriteria(t1 *testing.T) {
 		args             args
 		isCOBUpdate      bool
 		expectedCOBValue float64
-		isCOSUpdate      bool
-		expectedCOSValue float64
 	}{
 		{
 			name: "COBを更新する",
 			fields: fields{
 				500,
-				0,
 			},
 			args: args{
 				400,
 			},
 			isCOBUpdate:      true,
 			expectedCOBValue: 400,
-			isCOSUpdate:      false,
-			expectedCOSValue: 0,
 		},
 		{
 			name: "COBを更新しない",
 			fields: fields{
 				500,
-				0,
 			},
 			args: args{
 				600,
 			},
 			isCOBUpdate:      false,
 			expectedCOBValue: 500,
-			isCOSUpdate:      true,
-			expectedCOSValue: 0,
 		},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
 			t := trade{
-				criteriaOfBuy:  tt.fields.criteriaOfBuy,
-				criteriaOfSell: tt.fields.criteriaOfSell,
+				criteriaOfBuy: tt.fields.criteriaOfBuy,
 			}
 			isUpdate := t.UpdateCriteriaOfBuy(tt.args.value)
 			assert.Equal(t1, tt.expectedCOBValue, t.criteriaOfBuy)
