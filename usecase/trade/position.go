@@ -12,7 +12,7 @@ type trade struct {
 }
 
 func (t *trade) UpdateCriteriaOfBuy(value float64) bool {
-	if t.criteriaOfBuy-value < 0 {
+	if value < t.criteriaOfBuy {
 		t.criteriaOfBuy = value
 		return true
 	}
@@ -20,11 +20,11 @@ func (t *trade) UpdateCriteriaOfBuy(value float64) bool {
 }
 
 func (t *trade) UpdateCriteriaOfSell(value float64) bool {
-	if t.criteriaOfSell-value < 0 {
-		return false
+	if t.criteriaOfSell < value {
+		t.criteriaOfSell = value
+		return true
 	}
-	t.criteriaOfSell = value
-	return true
+	return false
 }
 
 func (t *trade) saveUpdateResultOfCOB(updateResult bool) {
@@ -41,28 +41,24 @@ type Decide interface {
 
 type position struct{}
 
-func (p position) DecidePosition(trade *trade) error {
+func (p position) DecidePosition(trade *trade, value float64) (string, error) {
 
 	// 現在のETHの値を取得する(Ticker)
-	value := 123.123
 	// 基準値を更新するかどうか決める関数を呼ぶ(trade)
 	cobResult := trade.UpdateCriteriaOfBuy(value)
 	trade.saveUpdateResultOfCOB(cobResult)
 	cosResult := trade.UpdateCriteriaOfSell(value)
 	trade.saveUpdateResultOfCOS(cosResult)
-	// 1. COBの最新とその前の値を見て、true->false になったか確認する
-	if cobResult != trade.updateResultListOfCOB[len(trade.updateResultListOfCOB)-1] {
-		// {1}. がtrue, {2}. がfalse の時に差分が1% 以上かどうかをみて、1%以上なら購入
-		if value*0.01 > trade.criteriaOfBuy {
-			// 購入
+	resultLastIndex := trade.updateResultListOfCOB[len(trade.updateResultListOfCOB)-2]
+	if cobResult != resultLastIndex {
+		if value >= trade.criteriaOfBuy*1.01 {
+			return "buy", nil
 		}
 	}
-	// 2. COSの最新とその前の値を見て、true->false になったか確認する
-	if cosResult != trade.updateResultListOfCOS[len(trade.updateResultListOfCOS)-1] {
-		// {2}. がtrue, {1}. がfalse の時に差分が1% 以上かどうかをみて、1%以下なら売却
-		if value*0.01 < trade.criteriaOfSell {
-			// 売却
+	if cosResult != trade.updateResultListOfCOS[len(trade.updateResultListOfCOS)-2] {
+		if value <= trade.criteriaOfSell*0.99 {
+			return "sell", nil
 		}
 	}
-	return nil
+	return "", nil
 }

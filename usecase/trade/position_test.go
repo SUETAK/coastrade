@@ -18,37 +18,37 @@ func Test_trade_UpdateCriteria(t1 *testing.T) {
 		fields           fields
 		args             args
 		isCOBUpdate      bool
-		expectedCOBValue int32
+		expectedCOBValue float64
 		isCOSUpdate      bool
-		expectedCOSValue int32
+		expectedCOSValue float64
 	}{
 		{
-			name: "COBを更新し、COSを更新しない",
+			name: "COBを更新する",
 			fields: fields{
 				500,
-				500,
-			},
-			args: args{
-				700,
-			},
-			isCOBUpdate:      true,
-			expectedCOBValue: 700,
-			isCOSUpdate:      false,
-			expectedCOSValue: 500,
-		},
-		{
-			name: "COBを更新しない/COSを更新する",
-			fields: fields{
-				500,
-				500,
+				0,
 			},
 			args: args{
 				400,
 			},
+			isCOBUpdate:      true,
+			expectedCOBValue: 400,
+			isCOSUpdate:      false,
+			expectedCOSValue: 0,
+		},
+		{
+			name: "COBを更新しない",
+			fields: fields{
+				500,
+				0,
+			},
+			args: args{
+				600,
+			},
 			isCOBUpdate:      false,
 			expectedCOBValue: 500,
 			isCOSUpdate:      true,
-			expectedCOSValue: 400,
+			expectedCOSValue: 0,
 		},
 	}
 	for _, tt := range tests {
@@ -58,11 +58,57 @@ func Test_trade_UpdateCriteria(t1 *testing.T) {
 				criteriaOfSell: tt.fields.criteriaOfSell,
 			}
 			isUpdate := t.UpdateCriteriaOfBuy(tt.args.value)
-			isCosUpdate := t.UpdateCriteriaOfSell(tt.args.value)
 			assert.Equal(t1, tt.expectedCOBValue, t.criteriaOfBuy)
 			assert.Equal(t1, tt.isCOBUpdate, isUpdate)
+		})
+	}
+}
+
+func Test_trade_UpdateCriteriaOfSell(t1 *testing.T) {
+	type fields struct {
+		criteriaOfSell float64
+	}
+	type args struct {
+		value float64
+	}
+	tests := []struct {
+		name             string
+		fields           fields
+		args             args
+		isCOSUpdate      bool
+		expectedCOSValue float64
+	}{
+		{
+			name: "COSを更新する",
+			fields: fields{
+				500,
+			},
+			args: args{
+				600,
+			},
+			isCOSUpdate:      true,
+			expectedCOSValue: 600,
+		},
+		{
+			name: "COSを更新しない",
+			fields: fields{
+				500,
+			},
+			args: args{
+				400,
+			},
+			isCOSUpdate:      false,
+			expectedCOSValue: 500,
+		},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := trade{
+				criteriaOfSell: tt.fields.criteriaOfSell,
+			}
+			isUpdate := t.UpdateCriteriaOfSell(tt.args.value)
 			assert.Equal(t1, tt.expectedCOSValue, t.criteriaOfSell)
-			assert.Equal(t1, tt.isCOSUpdate, isCosUpdate)
+			assert.Equal(t1, tt.isCOSUpdate, isUpdate)
 		})
 	}
 }
@@ -102,6 +148,56 @@ func Test_trade_saveUpdateResult(t1 *testing.T) {
 			}
 			t.saveUpdateResultOfCOB(tt.args)
 			assert.Equal(t1, tt.want, t.updateResultListOfCOB)
+		})
+	}
+}
+
+func Test_position_DecidePosition(t *testing.T) {
+	type args struct {
+		trade *trade
+		value float64
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr assert.ErrorAssertionFunc
+		wantStr string
+	}{
+		// TODO: Add test cases.
+		{
+			name: "value が値上がりして、COBが更新されず、買いポジションになる",
+			args: args{
+				&trade{
+					criteriaOfBuy:         500.0,
+					updateResultListOfCOB: []bool{true},
+					criteriaOfSell:        0,
+					updateResultListOfCOS: []bool{false},
+				},
+				600,
+			},
+			wantStr: "buy",
+			wantErr: nil,
+		},
+		{
+			name: "value が値下がりして、COSが更新されず、売りポジションになる",
+			args: args{
+				&trade{
+					criteriaOfBuy:         0,
+					updateResultListOfCOB: []bool{false},
+					criteriaOfSell:        500.0,
+					updateResultListOfCOS: []bool{true},
+				},
+				100,
+			},
+			wantStr: "sell",
+			wantErr: nil,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := position{}
+			actual, _ := p.DecidePosition(tt.args.trade, tt.args.value)
+			assert.Equal(t, tt.wantStr, actual)
 		})
 	}
 }
