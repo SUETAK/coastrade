@@ -4,11 +4,9 @@ package infrastructure
 import (
 	"coastrade/api/client"
 	config "coastrade/configs"
-	"errors"
-	"fmt"
-
 	"coastrade/domain/model"
 	"encoding/json"
+	"errors"
 	"log"
 )
 
@@ -28,22 +26,19 @@ type ticker struct {
 
 func (tp *ticker) GetTicker(product string) (*model.Ticker, error) {
 	apiClient := client.New(tp.config.ApiKey, tp.config.ApiSecret)
-	response, err := apiClient.DoRequest("ticker", "GET", product, nil)
+	response, err := apiClient.DoRequest("ticker", "GET", product, nil, nil)
 	if err != nil {
 		log.Printf("action=GetBalance err=%s", err.Error())
 		return nil, err
 	}
-	responseBytes := []byte(response)
 
-	fmt.Printf("%s", response)
-
-	var ticker model.Ticker
-	err = json.Unmarshal(responseBytes, &ticker)
+	var responseTicker model.Ticker
+	err = json.Unmarshal(response, &responseTicker)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("error")
 	}
-	return &ticker, nil
+	return &responseTicker, nil
 }
 
 // TODO ロジックを実装する

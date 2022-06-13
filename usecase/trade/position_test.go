@@ -44,7 +44,7 @@ func Test_trade_UpdateCriteria(t1 *testing.T) {
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
-			t := trade{
+			t := criteria{
 				criteriaOfBuy: tt.fields.criteriaOfBuy,
 			}
 			isUpdate := t.UpdateCriteriaOfBuy(tt.args.value)
@@ -93,7 +93,7 @@ func Test_trade_UpdateCriteriaOfSell(t1 *testing.T) {
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
-			t := trade{
+			t := criteria{
 				criteriaOfSell: tt.fields.criteriaOfSell,
 			}
 			isUpdate := t.UpdateCriteriaOfSell(tt.args.value)
@@ -130,7 +130,7 @@ func Test_trade_saveUpdateResult(t1 *testing.T) {
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
-			t := &trade{
+			t := &criteria{
 				criteriaOfBuy:         tt.fields.criteriaOfBuy,
 				updateResultListOfCOB: tt.fields.updateResultListOfCOB,
 				criteriaOfSell:        tt.fields.criteriaOfSell,
@@ -144,7 +144,7 @@ func Test_trade_saveUpdateResult(t1 *testing.T) {
 
 func Test_position_DecidePosition(t *testing.T) {
 	type args struct {
-		trade *trade
+		trade *criteria
 		value float64
 	}
 	tests := []struct {
@@ -153,11 +153,10 @@ func Test_position_DecidePosition(t *testing.T) {
 		wantErr assert.ErrorAssertionFunc
 		wantStr string
 	}{
-		// TODO: Add test cases.
 		{
 			name: "value が値上がりして、COBが更新されず、買いポジションになる",
 			args: args{
-				&trade{
+				&criteria{
 					criteriaOfBuy:         500.0,
 					updateResultListOfCOB: []bool{true},
 					criteriaOfSell:        0,
@@ -171,7 +170,7 @@ func Test_position_DecidePosition(t *testing.T) {
 		{
 			name: "value が値下がりして、COSが更新されず、売りポジションになる",
 			args: args{
-				&trade{
+				&criteria{
 					criteriaOfBuy:         0,
 					updateResultListOfCOB: []bool{false},
 					criteriaOfSell:        500.0,

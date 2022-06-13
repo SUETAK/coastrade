@@ -18,6 +18,11 @@ import (
 
 const baseUrl = "https://api.bitflyer.com/v1/"
 
+type APIClient interface {
+	SendOrder(order *infrastructure.Order, product string) (*infrastructure.ResponseSendChildOrder, error)
+	ListOrder(query map[string]string, product string) ([]infrastructure.Order, error)
+}
+
 func New(apikey, secretkey string) *Client {
 	return &Client{
 		apikey:     apikey,
