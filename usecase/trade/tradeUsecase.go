@@ -28,18 +28,18 @@ func (u tradeUsecase) DoTrading() (*infrastructure.ResponseSendChildOrder, error
 
 	value, err := u.ticker.GetTicker("ETH")
 	if err != nil {
-
+		return nil, err
 	}
 	decidedPosition, err := u.position.DecidePosition(baseCriteria, value.BestAskSize)
 	if err != nil {
-
+		return nil, err
 	}
 	var resp *infrastructure.ResponseSendChildOrder
 	if decidedPosition == "buy" {
 		buyOrder := &infrastructure.Order{}
 		resp, err = u.client.SendOrder(buyOrder, "ETH")
 		if err != nil {
-
+			return nil, err
 		}
 	}
 	if decidedPosition == "sell" {
