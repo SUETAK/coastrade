@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -104,6 +105,8 @@ func (client *Client) SendOrder(order *infrastructure.Order, product string) (*i
 	if err != nil {
 		return nil, err
 	}
+	logger, _ := zap.NewDevelopment()
+	logger.Info("BuyOrder", zap.Time("BuyTime", time.Now()), zap.Object("Order", order))
 	resp, err := client.DoRequest("POST", "me/sendchildorder", product, map[string]string{}, data)
 	if err != nil {
 		return nil, err

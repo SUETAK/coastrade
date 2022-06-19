@@ -1,5 +1,9 @@
 package infrastructure
 
+import (
+	"go.uber.org/zap/zapcore"
+)
+
 type Order struct {
 	ID                     int     `json:"id"`
 	ChildOrderAcceptanceID string  `json:"child_order_acceptance_id"`
@@ -23,6 +27,31 @@ type Order struct {
 	Count                  int     `json:"count"`
 	Before                 int     `json:"before"`
 	After                  int     `json:"after"`
+}
+
+func (o Order) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	enc.AddInt("ID", o.ID)
+	enc.AddInt("MinuteToExpires", o.MinuteToExpires)
+	enc.AddInt("Count", o.Count)
+	enc.AddInt("Before", o.Before)
+	enc.AddInt("After", o.After)
+	enc.AddString("ChildOrderAcceptanceID", o.ChildOrderState)
+	enc.AddString("ProductCode", o.ProductCode)
+	enc.AddString("ChildOrderType", o.ChildOrderType)
+	enc.AddString("Side", o.Side)
+	enc.AddString("TimeInForce", o.TimeInForce)
+	enc.AddString("ErrorMessage", o.ErrorMessage)
+	enc.AddString("ChildOrderState", o.ChildOrderState)
+	enc.AddString("ExpireDate", o.ExpireDate)
+	enc.AddString("ChildOrderDate", o.ChildOrderDate)
+	enc.AddFloat64("Side", o.Price)
+	enc.AddFloat64("Price", o.Price)
+	enc.AddFloat64("AveragePrice", o.AveragePrice)
+	enc.AddFloat64("OutstandingSize", o.OutstandingSize)
+	enc.AddFloat64("CancelSize", o.CancelSize)
+	enc.AddFloat64("ExecutedSize", o.ExecutedSize)
+	enc.AddFloat64("TotalCommission", o.TotalCommission)
+	return nil
 }
 
 type ResponseSendChildOrder struct {
