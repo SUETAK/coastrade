@@ -2,6 +2,7 @@ package rest
 
 import (
 	"coastrade/usecase"
+	"coastrade/usecase/trade"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,22 +11,24 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewTickerHandler(tu usecase.TickerUseCase) TickerHandler {
-	return &tickerHandler{
-		tickerUseCase: tu,
+func NewTradingHandler(tu usecase.TickerUseCase, tradingUsecase trade.Trade) TradingHandler {
+	return &tradingHandler{
+		tickerUseCase:  tu,
+		tradingUsecase: tradingUsecase,
 	}
 }
 
-type TickerHandler interface {
+type TradingHandler interface {
 	Index(http.ResponseWriter, *http.Request, httprouter.Params)
 	ContinueIndex(http.ResponseWriter, *http.Request, httprouter.Params)
 }
 
-type tickerHandler struct {
-	tickerUseCase usecase.TickerUseCase
+type tradingHandler struct {
+	tickerUseCase  usecase.TickerUseCase
+	tradingUsecase trade.Trade
 }
 
-func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
+func (th tradingHandler) Index(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
 	duration, err := time.ParseDuration(r.FormValue("duration"))
 	if err != nil {
 		err.Error()
@@ -51,7 +54,7 @@ func (th tickerHandler) Index(w http.ResponseWriter, r *http.Request, pr httprou
 
 }
 
-func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
+func (th tradingHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr httprouter.Params) {
 	go func() {
 		//クライアントにレスポンスを返却
 		w.Header().Set("Content-Type", "application/json")
@@ -69,5 +72,16 @@ func (th tickerHandler) ContinueIndex(w http.ResponseWriter, r *http.Request, pr
 			}
 			time.Sleep(time.Second)
 		}
+	}()
+}
+
+func (th tradingHandler) ObserveValue() {
+	go func() {
+		criteria := trade.NewCriteria(0, 0)
+		_, err := th.tradingUsecase.DoTrading("ETH", criteria)
+		if err != nil {
+
+		}
+		time.Sleep(time.Second)
 	}()
 }

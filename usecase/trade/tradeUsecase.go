@@ -6,7 +6,7 @@ import (
 )
 
 type Trade interface {
-	DoTrading() (*infrastructure.ResponseSendChildOrder, error)
+	DoTrading(product string, criteria *criteria) (*infrastructure.ResponseSendChildOrder, error)
 }
 
 func NewTradeUsecase(ticker infrastructure.TickerInfra, position Decide, client client.APIClient) Trade {
@@ -23,21 +23,19 @@ type tradeUsecase struct {
 	client   client.APIClient
 }
 
-func (u tradeUsecase) DoTrading() (*infrastructure.ResponseSendChildOrder, error) {
-	baseCriteria := NewCriteria(0, 0)
-
-	value, err := u.ticker.GetTicker("ETH")
+func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastructure.ResponseSendChildOrder, error) {
+	value, err := u.ticker.GetTicker(product)
 	if err != nil {
 		return nil, err
 	}
-	decidedPosition, err := u.position.DecidePosition(baseCriteria, value.BestAskSize)
+	decidedPosition, err := u.position.DecidePosition(criteria, value.BestAskSize)
 	if err != nil {
 		return nil, err
 	}
 	var resp *infrastructure.ResponseSendChildOrder
 	if decidedPosition == "buy" {
 		buyOrder := &infrastructure.Order{}
-		resp, err = u.client.SendOrder(buyOrder, "ETH")
+		resp, err = u.client.SendOrder(buyOrder, product)
 		if err != nil {
 			return nil, err
 		}

@@ -33,6 +33,6 @@ func main() {
 
 }
 
-func NewTicker(db infrastructure.CryptoSQL, config config.Config) handler.TickerHandler {
-	return handler.NewTickerHandler(usecase.NewTickerUseCase(db, config))
+func NewTicker(db infrastructure.CryptoSQL, config config.Config) handler.TradingHandler {
+	return handler.NewTradingHandler(usecase.NewTickerUseCase(db, config))
 }

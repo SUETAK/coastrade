@@ -109,6 +109,7 @@ func (client *Client) SendOrder(order *infrastructure.Order, product string) (*i
 	logger.Info("BuyOrder", zap.Time("BuyTime", time.Now()), zap.Object("Order", order))
 	resp, err := client.DoRequest("POST", "me/sendchildorder", product, map[string]string{}, data)
 	if err != nil {
+		logger.Error("BuyOrder is Fail", zap.Time("Error Time", time.Now()), zap.Object("SendOrder", order))
 		return nil, err
 	}
 	var response infrastructure.ResponseSendChildOrder
