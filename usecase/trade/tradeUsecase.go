@@ -3,6 +3,7 @@ package trade
 import (
 	"coastrade/api/client"
 	"coastrade/infrastructure"
+	"math"
 )
 
 type Trade interface {
@@ -33,8 +34,20 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 		return nil, err
 	}
 	var resp *infrastructure.ResponseSendChildOrder
+	// size を決定する関数を作成する
+	size, err := u.client.GetBalance(product)
+	if err != nil {
+		return nil, err
+	}
 	if decidedPosition == "buy" {
-		buyOrder := &infrastructure.Order{}
+		buyOrder := &infrastructure.Order{
+			ProductCode:     product,
+			ChildOrderType:  "MARKET",
+			Side:            "SELL",
+			Size:            AdjustSize(),
+			MinuteToExpires: 100,
+			TimeInForce:     "GTC",
+		}
 		resp, err = u.client.SendOrder(buyOrder, product)
 		if err != nil {
 			return nil, err
@@ -44,8 +57,14 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 		sellOrder := &infrastructure.Order{}
 		resp, err = u.client.SendOrder(sellOrder, "ETH")
 		if err != nil {
-
+			return nil, err
 		}
 	}
 	return resp, nil
+}
+
+func AdjustSize(size float64) float64 {
+	fee := size * 0.0012
+	size = size - fee
+	return math.Floor(size*10000) / 10000
 }

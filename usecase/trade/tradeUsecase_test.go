@@ -53,10 +53,11 @@ func Test_tradeUsecase_DoTrading(t *testing.T) {
 	clientMock := new(APIClientMock)
 
 	tests := []struct {
-		name    string
-		fields  fields
-		want    *infrastructure.ResponseSendChildOrder
-		wantErr assert.ErrorAssertionFunc
+		name     string
+		fields   fields
+		want     *infrastructure.ResponseSendChildOrder
+		wantErr  assert.ErrorAssertionFunc
+		criteria *criteria
 	}{
 		// TODO: Add test cases.
 		{
@@ -68,6 +69,12 @@ func Test_tradeUsecase_DoTrading(t *testing.T) {
 			},
 			&infrastructure.ResponseSendChildOrder{},
 			nil,
+			&criteria{
+				criteriaOfBuy:         100,
+				criteriaOfSell:        100,
+				updateResultListOfCOB: []bool{true},
+				updateResultListOfCOS: []bool{false},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -77,7 +84,7 @@ func Test_tradeUsecase_DoTrading(t *testing.T) {
 				position: tt.fields.position,
 				client:   tt.fields.client,
 			}
-			got, err := u.DoTrading()
+			got, err := u.DoTrading("ETH", tt.criteria)
 			if !tt.wantErr(t, err, fmt.Sprintf("DoTrading()")) {
 				return
 			}

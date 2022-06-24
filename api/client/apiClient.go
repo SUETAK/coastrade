@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"coastrade/domain/model"
 	"coastrade/infrastructure"
 	"crypto/hmac"
 	"crypto/sha256"
@@ -22,6 +23,7 @@ const baseUrl = "https://api.bitflyer.com/v1/"
 type APIClient interface {
 	SendOrder(order *infrastructure.Order, product string) (*infrastructure.ResponseSendChildOrder, error)
 	ListOrder(query map[string]string, product string) ([]infrastructure.Order, error)
+	GetBalance(product string) ([]model.Balance, error)
 }
 
 func New(apikey, secretkey string) *Client {
@@ -118,6 +120,24 @@ func (client *Client) SendOrder(order *infrastructure.Order, product string) (*i
 		return nil, err
 	}
 	return &response, nil
+}
+
+func (client *Client) GetBalance(product string) ([]model.Balance, error) {
+	api := "me/getbalance"
+	resp, err := client.DoRequest("GET", api, product, map[string]string{}, nil)
+	log.Printf("api=%s resp=%s", api, string(resp))
+	if err != nil {
+		log.Printf("action=GetBalance err=%s", err.Error())
+		return nil, err
+	}
+	var balance []model.Balance
+
+	err = json.Unmarshal(resp, &balance)
+	if err != nil {
+		log.Printf("action=GetBalance err=%s", err.Error())
+		return nil, err
+	}
+	return balance, nil
 }
 
 func (client *Client) ListOrder(query map[string]string, product string) ([]infrastructure.Order, error) {
