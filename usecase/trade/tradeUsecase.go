@@ -80,9 +80,3 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 	}
 	return resp, nil
 }
-
-func AdjustSize(size float64) float64 {
-	fee := size * 0.0012
-	size = size - fee
-	return math.Floor(size*10000) / 10000
-}

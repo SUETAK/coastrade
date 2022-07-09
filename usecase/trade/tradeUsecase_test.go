@@ -24,6 +24,11 @@ func (m APIClientMock) ListOrder(query map[string]string, product string) ([]inf
 	return args.Get(0).([]infrastructure.Order), args.Error(1)
 }
 
+func (m APIClientMock) GetBalance(product string) ([]model.Balance, error) {
+	args := m.Called(product)
+	return args.Get(0).([]model.Balance), args.Error(1)
+}
+
 type DecideMock struct {
 	mock.Mock
 }
