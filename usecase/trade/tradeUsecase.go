@@ -2,8 +2,8 @@ package trade
 
 import (
 	"coastrade/api/client"
+	"coastrade/domain/model"
 	"coastrade/infrastructure"
-	"math"
 )
 
 type Trade interface {
@@ -34,8 +34,18 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 		return nil, err
 	}
 	var resp *infrastructure.ResponseSendChildOrder
-	// size を決定する関数を作成する
-	size, err := u.client.GetBalance(product)
+	balances, err := u.client.GetBalance(product)
+	if err != nil {
+		return nil, err
+	}
+
+	var availableSize float64
+	for _, balance := range balances {
+		availableSize = balance.GetAvailable(product)
+	}
+	if availableSize == 0 {
+		return &infrastructure.ResponseSendChildOrder{ChildOrderAcceptanceID: ""}, nil
+	}
 	if err != nil {
 		return nil, err
 	}
