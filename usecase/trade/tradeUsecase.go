@@ -50,11 +50,12 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 		return nil, err
 	}
 	if decidedPosition == "buy" {
+		useSize := availableSize * 0.99
 		buyOrder := &infrastructure.Order{
 			ProductCode:     product,
 			ChildOrderType:  "MARKET",
-			Side:            "SELL",
-			Size:            AdjustSize(),
+			Side:            "BUY",
+			Size:            model.AdjustSize(useSize),
 			MinuteToExpires: 100,
 			TimeInForce:     "GTC",
 		}
@@ -64,7 +65,14 @@ func (u tradeUsecase) DoTrading(product string, criteria *criteria) (*infrastruc
 		}
 	}
 	if decidedPosition == "sell" {
-		sellOrder := &infrastructure.Order{}
+		sellOrder := &infrastructure.Order{
+			ProductCode:     product,
+			ChildOrderType:  "MARKET",
+			Side:            "SELL",
+			Size:            model.AdjustSize(availableSize),
+			MinuteToExpires: 100,
+			TimeInForce:     "GTC",
+		}
 		resp, err = u.client.SendOrder(sellOrder, "ETH")
 		if err != nil {
 			return nil, err
