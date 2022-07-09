@@ -103,6 +103,7 @@ func (client *Client) header(method, endpoint string, body []byte) map[string]st
 }
 
 func (client *Client) SendOrder(order *infrastructure.Order, product string) (*infrastructure.ResponseSendChildOrder, error) {
+	// TODO 環境変数をみて、バックテストかどうかを判断する
 	data, err := json.Marshal(order)
 	if err != nil {
 		return nil, err
